@@ -2,9 +2,9 @@
 name = "rust-hello_rust"
 version = "0.1.0"
 authors = ["Aaron Tsui <aaron.tsui@outlook.com>"]
-edition = "2021"
+edition = "2024"
 resolver = "2"
-rust-version = "1.77"
+rust-version = "1.92"
 
 [lib]
 crate-type = ["staticlib"]
@@ -19,9 +19,16 @@ opt-level = "z"
 
 [dependencies]
 log = "0.4"
-esp-idf-svc = { version = "0.52.1", default-features = false, features = ["std", "native", "critical-section", "embassy-time-driver", "embassy-sync"] }
+esp-idf-svc = { version = "0.52", default-features = false, features = ["std", "native", "critical-section", "embassy-time-driver", "embassy-sync"] }
 # Remove `generic-queue-8` if you plan to use `embassy-time` WITH `embassy-executor`
 embassy-time = { version = "0.5", features = ["generic-queue-8"] }
 
 [build-dependencies]
 embuild = "0.33"
+
+# Temporary patches until IDF 6.0 support is released on crates.io
+[patch.crates-io]
+esp-idf-sys = { git = "https://github.com/esp-rs/esp-idf-sys", branch = "master" }
+esp-idf-hal = { git = "https://github.com/esp-rs/esp-idf-hal", branch = "master" }
+esp-idf-svc = { git = "https://github.com/esp-rs/esp-idf-svc", branch = "master" }
+embuild = { git = "https://github.com/esp-rs/embuild", branch = "master" }
