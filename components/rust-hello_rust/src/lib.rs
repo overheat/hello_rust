@@ -1,4 +1,4 @@
-#[no_mangle]
+#[unsafe(no_mangle)]
 extern "C" fn rust_main() -> i32 {
     // It is necessary to call this function once. Otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71

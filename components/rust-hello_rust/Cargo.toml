@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Aaron Tsui <aaron.tsui@outlook.com>"]
 edition = "2024"
 resolver = "2"
-rust-version = "1.92"
+rust-version = "1.93"
 
 [lib]
 crate-type = ["staticlib"]
