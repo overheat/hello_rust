@@ -42,7 +42,18 @@ else()
     set(CARGO_BUILD_ARG "--release")
 endif()
 
-set(CARGO_BUILD_STD_ARG -Zbuild-std=std,panic_abort)
+set(RUST_MEMORY_MODEL "alloc" CACHE STRING "Rust memory model (alloc or no_alloc)")
+set_property(CACHE RUST_MEMORY_MODEL PROPERTY STRINGS alloc no_alloc)
+
+if(RUST_MEMORY_MODEL STREQUAL "alloc")
+    set(CARGO_FEATURES_ARG --no-default-features --features alloc-mode)
+    set(CARGO_BUILD_STD_ARG -Zbuild-std=core,alloc,panic_abort)
+elseif(RUST_MEMORY_MODEL STREQUAL "no_alloc")
+    set(CARGO_FEATURES_ARG --no-default-features --features no-alloc-mode)
+    set(CARGO_BUILD_STD_ARG -Zbuild-std=core,panic_abort)
+else()
+    message(FATAL_ERROR "Unsupported RUST_MEMORY_MODEL='${RUST_MEMORY_MODEL}'. Expected 'alloc' or 'no_alloc'.")
+endif()
 
 if(IDF_VERSION_MAJOR GREATER "4")
 set(ESP_RUSTFLAGS "--cfg espidf_time64")
@@ -77,7 +88,7 @@ ExternalProject_Add(
         CARGO_CMAKE_BUILD_COMPILER=${CMAKE_C_COMPILER}
         RUSTFLAGS=${ESP_RUSTFLAGS}
         MCU=${CONFIG_IDF_TARGET}
-        cargo build --target ${RUST_TARGET} --target-dir ${CARGO_TARGET_DIR} ${CARGO_BUILD_ARG} ${CARGO_BUILD_STD_ARG}
+        cargo build --target ${RUST_TARGET} --target-dir ${CARGO_TARGET_DIR} ${CARGO_BUILD_ARG} ${CARGO_FEATURES_ARG} ${CARGO_BUILD_STD_ARG}
     INSTALL_COMMAND ""
     BUILD_ALWAYS TRUE
     TMP_DIR "${CARGO_BUILD_DIR}/tmp"

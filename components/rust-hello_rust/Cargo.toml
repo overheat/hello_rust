@@ -6,6 +6,11 @@ edition = "2024"
 resolver = "2"
 rust-version = "1.93"
 
+[features]
+default = []
+alloc-mode = ["dep:esp-idf-svc", "dep:log", "esp-idf-sys/alloc_handler", "esp-idf-sys/panic_handler"]
+no-alloc-mode = ["esp-idf-sys/panic_handler"]
+
 [lib]
 crate-type = ["staticlib"]
 harness = false # do not use the built in cargo test harness -> resolve rust-analyzer errors
@@ -18,10 +23,9 @@ debug = true # Symbols are nice and they don't increase the size on Flash
 opt-level = "z"
 
 [dependencies]
-log = "0.4"
-esp-idf-svc = { version = "0.52", default-features = false, features = ["std", "native", "critical-section", "embassy-time-driver", "embassy-sync"] }
-# Remove `generic-queue-8` if you plan to use `embassy-time` WITH `embassy-executor`
-embassy-time = { version = "0.5", features = ["generic-queue-8"] }
+esp-idf-sys = { version = "0.37", default-features = false, features = ["native"] }
+esp-idf-svc = { version = "0.52", optional = true, default-features = false, features = ["alloc", "alloc_handler", "native"] }
+log = { version = "0.4", optional = true, default-features = false }
 
 [build-dependencies]
 embuild = "0.33"
